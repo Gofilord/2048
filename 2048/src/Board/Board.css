@@ -1,17 +1,19 @@
 .board {
-    display: inline-block;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 16px;
     height: 80vh;
     width: 80vh;
     background: #eee;
 }
 
 .board-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    
 }
 
 .cell {
-    height: 40px;
+    /* height: 40px; */
     background: #ddd;
     border: 1px solid black;
 }

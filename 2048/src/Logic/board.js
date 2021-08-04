@@ -1,5 +1,5 @@
 // defines a single board you can import from anywhere in the app (initialized upon start)
-import {BOARD_SIZE, EMPTY_CELL, INITIAL_CELL, WINNING_VALUE} from './consts';
+import {BOARD_SIZE, EMPTY_CELL, GAME_WON, INITIAL_CELL, NO_MOVES, WINNING_VALUE} from './consts';
 
 class Board {
     board = [];
@@ -134,7 +134,7 @@ class Board {
 
                     // if new value is winning value, win the game
                     if (this.board[target.i][target.j] === WINNING_VALUE) {
-                        throw MediaError("Win");
+                        throw new MediaError(GAME_WON);
                     }
 
                     this.board[current.i][current.j] = EMPTY_CELL;
@@ -144,7 +144,7 @@ class Board {
 
         // check if game over
         if (!this.hasAvailableMoves()) {
-            throw RangeError("No available moves");
+            throw new RangeError(NO_MOVES);
         }
 
         // each shift randomly spurs a new cell with initial value (if there is space for it)
@@ -188,9 +188,9 @@ function generateInitialBoard() {
 
 const board = new Board(generateInitialBoard());
 // const board = new Board([
-//     [32, 8, 2, 8],
+//     [32, 32, 2, 8],
 //     [2, 4, 32, 16],
 //     [4, 8, 2, 8],
 //     [64, 32, 4, 16]
-// ])
+// ]);
 export default board;
