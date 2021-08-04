@@ -3,3 +3,8 @@
   align-items: center;
   justify-content: center;
 }
+
+.title {
+  color: #776e65;
+  font-size: 85px;
+}
