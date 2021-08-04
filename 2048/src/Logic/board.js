@@ -121,6 +121,7 @@ class Board {
     // main gameplay
     async shift(direction) {
         const generator = this.GENERATORS[direction];
+        const combinedCells = [];
         for (let pair of generator()) {
             const { current, target } = pair;
             if (this.board[current.i][current.j] !== EMPTY_CELL && target) {
@@ -130,14 +131,18 @@ class Board {
                     this.board[current.i][current.j] = EMPTY_CELL;
                 // combine values
                 } else if (this.board[target.i][target.j] === this.board[current.i][current.j]) {
-                    this.board[target.i][target.j] += this.board[current.i][current.j];
+                    // avoid combining twice in a single turn
+                    if (!combinedCells.includes(String(target.i + target.j))) {
+                        this.board[target.i][target.j] += this.board[current.i][current.j];
 
-                    // if new value is winning value, win the game
-                    if (this.board[target.i][target.j] === WINNING_VALUE) {
-                        throw new MediaError(GAME_WON);
+                        // if new value is winning value, win the game
+                        if (this.board[target.i][target.j] === WINNING_VALUE) {
+                            throw new MediaError(GAME_WON);
+                        }
+
+                        this.board[current.i][current.j] = EMPTY_CELL;
+                        combinedCells.push(String(target.i + target.j));
                     }
-
-                    this.board[current.i][current.j] = EMPTY_CELL;
                 }
             }
         }
@@ -186,11 +191,11 @@ function generateInitialBoard() {
     return initialBoard;
 }
 
-const board = new Board(generateInitialBoard());
-// const board = new Board([
-//     [32, 32, 2, 8],
-//     [2, 4, 32, 16],
-//     [4, 8, 2, 8],
-//     [64, 32, 4, 16]
-// ]);
+// const board = new Board(generateInitialBoard());
+const board = new Board([
+    [null, null, null, null],
+    [null, null, null, null],
+    [null, null, null, null],
+    [2, 2, 2, 2]
+]);
 export default board;

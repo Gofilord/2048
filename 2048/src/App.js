@@ -42,9 +42,11 @@ function App() {
 
     return (
         <div className="App" onKeyPress={e => console.log(e.key)}>
-            <h1>2048</h1>
-
-            <Board data={boardView} />
+            <div className="game-container">
+                <h1>2048</h1>
+                <Board data={boardView} />
+            </div>
+            
         </div>
     );
 }
