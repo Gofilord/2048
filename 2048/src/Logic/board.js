@@ -15,27 +15,19 @@ class Board {
     // main logic of shifting to left
     shiftLeft() {
         for (let i = 0; i < BOARD_SIZE; i++) {
-            for (let j = 1; j < BOARD_SIZE; j++) { 
-                if (this.board[i][j] === EMPTY_CELL) {
+            for (let j = BOARD_SIZE - 1; j > 0; j--) { 
+                const currentCell = this.board[i][j];
+
+                if (currentCell === EMPTY_CELL) {
                     continue;
                 }
 
-                // go over row towards left
-                // if left cell is null, move current cell to left cell
-                // if left cell has value, combine accordingly
-                for (let k = j; k > 0; k--) {
-                    const currentCell = this.board[i][k];
-
-                    if (this.board[i][k - 1] === EMPTY_CELL) {
-                        this.board[i][k - 1] = currentCell;
-                        this.board[i][k] = EMPTY_CELL;
-                    } else if (this.board[i][k - 1] === currentCell) {
-                        this.board[i][k - 1] += currentCell;
-                        this.board[i][k] = EMPTY_CELL;
-                        break;
-                    } else { // there is a value but it's not the same
-                        break;
-                    }
+                if (this.board[i][j - 1] === EMPTY_CELL) {
+                    this.board[i][j - 1] = currentCell;
+                    this.board[i][j] = EMPTY_CELL;
+                } else if (this.board[i][j - 1] === currentCell) {
+                    this.board[i][j - 1] += currentCell;
+                    this.board[i][j] = EMPTY_CELL;
                 }
             }
         }
