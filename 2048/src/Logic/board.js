@@ -19,6 +19,16 @@ class Board {
         return this.board;
     }
 
+    // returns new indices of a cell in which there is no value
+    generateRandomCellIfEmpty() {
+        let randomCell = generateRandomCell(BOARD_SIZE);
+        while (this.board[randomCell.row][randomCell.col] !== EMPTY_CELL) {
+            randomCell = generateRandomCell(BOARD_SIZE);
+        }
+
+        return randomCell;
+    }
+
     * upGenerator() {
         for (let i = 0; i < BOARD_SIZE; i++) {
             for (let j = 0; j < BOARD_SIZE; j++) {
@@ -86,6 +96,10 @@ class Board {
                 }
             }
         }
+
+        // each shift randomly spurs a new cell with initial value
+        const randomCell = this.generateRandomCellIfEmpty();
+        this.board[randomCell.row][randomCell.col] = INITIAL_CELL;
     }
 }
 
@@ -112,11 +126,11 @@ function generateInitialBoard() {
     return initialBoard;
 }
 
-// const board = new Board(generateInitialBoard());
-const board = new Board([
-    [null, null, null, null],
-    [null, null, 2, null],
-    [null, null, 2, 2],
-    [4, null, 2, null]
-])
+const board = new Board(generateInitialBoard());
+// const board = new Board([
+//     [null, null, null, null],
+//     [null, null, 2, null],
+//     [null, null, 2, 2],
+//     [4, null, 2, null]
+// ])
 export default board;
