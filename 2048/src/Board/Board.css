@@ -4,8 +4,8 @@
     grid-template-rows: repeat(4, 1fr);
     gap: 16px;
     padding: 16px;
-    height: 80vh;
-    width: 80vh;
+    height: 500px;
+    width: 500px;
     background: #bbada0;
     border-radius: 5px;
 }
@@ -62,8 +62,10 @@
 
 .cell-1024 {
     background: #e2c92a;
+    font-size: 35px;
 }
 
 .cell-2048 {
     background: #e3c600;
+    font-size: 35px;
 }

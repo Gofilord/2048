@@ -146,7 +146,7 @@ class Board {
 
                         // if new value is winning value, win the game
                         if (this.board[target.i][target.j] === WINNING_VALUE) {
-                            throw new MediaError(GAME_WON);
+                            throw RangeError(GAME_WON);
                         }
 
                         this.board[current.i][current.j] = EMPTY_CELL;
@@ -201,11 +201,11 @@ function generateInitialBoard() {
     return initialBoard;
 }
 
-const board = new Board(generateInitialBoard());
-// const board = new Board([
-//     [null, null, null, null],
-//     [null, null, null, null],
-//     [null, null, null, null],
-//     [2, 2, 2, 2]
-// ]);
+// const board = new Board(generateInitialBoard());
+const board = new Board([
+    [32, 64, 32, 64],
+    [8, 16, 8, 16],
+    [16, null, null, null],
+    [1024, 1024, null, null]
+]);
 export default board;
