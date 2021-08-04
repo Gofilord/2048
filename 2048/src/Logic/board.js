@@ -5,7 +5,7 @@ import {BOARD_SIZE, EMPTY_CELL, GAME_WON, INITIAL_CELL, NO_MOVES, WINNING_VALUE}
 class Board {
     board = [];
 
-    GENERATORS = {
+    DIRECTIONAL_ITERATORS = {
         "up": this.upGenerator.bind(this),
         "right": this.rightGenerator.bind(this),
         "down": this.downGenerator.bind(this),
@@ -30,7 +30,7 @@ class Board {
         return !!this.board.filter(row => row.filter(cell => cell === EMPTY_CELL).length).length
     }
 
-    // if there is empty space or adjacent cells with value
+    // returns true if there is empty space or adjacent cells with value.
     // we go over all rows from left to right and bottom up, and if player can't move
     // in both directions, then he can't move at all.
     hasAvailableMoves() {
@@ -71,6 +71,13 @@ class Board {
         return randomCell;
     }
 
+    /*
+    * Each direction we wish to shift in, requires different iteration
+    * on the board. To separate the iteration from the game logic, I created
+    * these four generators, corosponding to the directions of movement.
+    * Each generator keeps yielding the current cell and the next cell it will iterate
+    * (also known as the target).
+    */
     * upGenerator() {
         for (let i = 0; i < BOARD_SIZE; i++) {
             for (let j = 0; j < BOARD_SIZE; j++) {
@@ -110,7 +117,6 @@ class Board {
         }
     }
 
-    // yields the next non-empty cell indices when scanning the board top to bottom, left to right 
     * leftGenerator() {
         for (let i = 0; i < BOARD_SIZE; i++) {
             for (let j = 0; j < BOARD_SIZE; j++) {
@@ -126,18 +132,19 @@ class Board {
 
     // main gameplay
     async shift(direction) {
-        const generator = this.GENERATORS[direction];
+        const generator = this.DIRECTIONAL_ITERATORS[direction];
         const combinedCells = [];
         let boardChanged = false; // we only spur a random cell if the board changed
 
-        for (let pair of generator()) {
-            const { current, target } = pair;
+        for (let { current, target } of generator()) {
             if (this.board[current.i][current.j] !== EMPTY_CELL && target) {
+
                 // move cell
                 if (this.board[target.i][target.j] === EMPTY_CELL) {
                     this.board[target.i][target.j] = this.board[current.i][current.j];
                     this.board[current.i][current.j] = EMPTY_CELL;
                     boardChanged = true;
+
                 // combine values
                 } else if (this.board[target.i][target.j] === this.board[current.i][current.j]) {
                     // avoid combining twice in a single turn
@@ -172,6 +179,7 @@ class Board {
     }
 }
 
+// utility functions
 function generateRandomIndex(max) {
     return Math.floor(Math.random(max) * max);
 }
@@ -190,7 +198,7 @@ function generateInitialBoard() {
     let randomCell2 = generateRandomCell(BOARD_SIZE);
 
     // in case random returned same cell twice
-    // it can happen twice in a row, but very minimal change
+    // it can happen twice in a row, but very minimal chance
     if (randomCell1.row === randomCell2.row && randomCell1.col === randomCell2.col) {
         randomCell1 = generateRandomCell(BOARD_SIZE);
         randomCell2 = generateRandomCell(BOARD_SIZE);
@@ -201,11 +209,5 @@ function generateInitialBoard() {
     return initialBoard;
 }
 
-// const board = new Board(generateInitialBoard());
-const board = new Board([
-    [32, 64, 32, 64],
-    [8, 16, 8, 16],
-    [16, null, null, null],
-    [1024, 1024, null, null]
-]);
+const board = new Board(generateInitialBoard());
 export default board;
