@@ -4,6 +4,7 @@ import board from './Logic/board';
 function App() {
 
   console.log(board.get());
+  console.log(board.hasAvailableMoves());
 
   const shiftLeft = () => {
     board.shift("left");

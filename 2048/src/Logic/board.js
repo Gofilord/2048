@@ -12,11 +12,47 @@ class Board {
     }
 
     constructor(initialBoard) {
-        this.board = initialBoard;
+        this.board = JSON.parse(JSON.stringify(initialBoard)); // deep copy for the sake of immutability
     }
 
     get() {
         return this.board;
+    }
+
+    // returns true if the board has at least one empty cell
+    hasEmptySpace() { 
+        return !!this.board.filter(row => row.filter(cell => cell === EMPTY_CELL).length).length
+    }
+
+    // if there is empty space or adjacent cells with value
+    // we go over all rows from left to right and bottom up, and if player can't move
+    // in both directions, then he can't move at all.
+    hasAvailableMoves() {
+        // if there is empty space, for sure we have available moves
+        if (this.hasEmptySpace()) {
+            return true;
+        }
+
+        const leftGenerator = this.leftGenerator;
+        const upGenerator = this.upGenerator;
+
+        const canMove = (generator) => {
+            let canMove = false;
+            for (let { current, target } of generator()) {
+                if (this.board[current.i][current.j] !== EMPTY_CELL && target) {
+                    if (this.board[current.i][current.j] === this.board[target.i][target.j]) {
+                        canMove = true;
+                    }
+                }
+            }
+
+            return canMove;
+        }
+        
+        let canMoveSideways = canMove(leftGenerator);
+        let canMoveUpOrDown = canMove(upGenerator);;
+
+        return canMoveUpOrDown || canMoveSideways;
     }
 
     // returns new indices of a cell in which there is no value
@@ -82,7 +118,8 @@ class Board {
         }
     }
 
-    shift(direction) {
+    // main gameplay
+    async shift(direction) {
         const generator = this.GENERATORS[direction];
         for (let pair of generator()) {
             const { current, target } = pair;
@@ -97,9 +134,18 @@ class Board {
             }
         }
 
-        // each shift randomly spurs a new cell with initial value
-        const randomCell = this.generateRandomCellIfEmpty();
-        this.board[randomCell.row][randomCell.col] = INITIAL_CELL;
+        // check if game over
+        if (!this.hasAvailableMoves()) {
+            throw RangeError("No available moves");
+        }
+
+        // each shift randomly spurs a new cell with initial value (if there is space for it)
+        if (this.hasEmptySpace()) {
+            const randomCell = this.generateRandomCellIfEmpty();
+            this.board[randomCell.row][randomCell.col] = INITIAL_CELL;
+        }
+
+        return this.board;
     }
 }
 
@@ -128,9 +174,9 @@ function generateInitialBoard() {
 
 const board = new Board(generateInitialBoard());
 // const board = new Board([
-//     [null, null, null, null],
-//     [null, null, 2, null],
-//     [null, null, 2, 2],
-//     [4, null, 2, null]
+//     [32, 8, 2, 8],
+//     [2, 4, 32, 16],
+//     [4, 8, 2, 8],
+//     [64, 32, 4, 16]
 // ])
 export default board;
