@@ -1,4 +1,5 @@
 // defines a single board you can import from anywhere in the app (initialized upon start)
+import * as deepcopy from "deepcopy";
 import {BOARD_SIZE, EMPTY_CELL, GAME_WON, INITIAL_CELL, NO_MOVES, WINNING_VALUE} from './consts';
 
 class Board {
@@ -12,10 +13,15 @@ class Board {
     }
 
     constructor(initialBoard) {
-        this.board = JSON.parse(JSON.stringify(initialBoard)); // deep copy for the sake of immutability
+        this.board = deepcopy(initialBoard); // deep copy for the sake of immutability
     }
 
     async get() {
+        return this.board;
+    }
+
+    async newGame() {
+        this.board = deepcopy(generateInitialBoard());
         return this.board;
     }
 

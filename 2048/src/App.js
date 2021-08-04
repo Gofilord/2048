@@ -41,7 +41,10 @@ function App() {
     });
 
     const newGame = () => {
-
+        board.newGame().then(newBoard => {
+            console.log(newBoard);
+            setBoardView(deepcopy(newBoard));
+        });
     }
 
     return (
