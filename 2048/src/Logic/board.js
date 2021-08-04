@@ -122,6 +122,8 @@ class Board {
     async shift(direction) {
         const generator = this.GENERATORS[direction];
         const combinedCells = [];
+        let boardChanged = false; // we only spur a random cell if the board changed
+
         for (let pair of generator()) {
             const { current, target } = pair;
             if (this.board[current.i][current.j] !== EMPTY_CELL && target) {
@@ -129,6 +131,7 @@ class Board {
                 if (this.board[target.i][target.j] === EMPTY_CELL) {
                     this.board[target.i][target.j] = this.board[current.i][current.j];
                     this.board[current.i][current.j] = EMPTY_CELL;
+                    boardChanged = true;
                 // combine values
                 } else if (this.board[target.i][target.j] === this.board[current.i][current.j]) {
                     // avoid combining twice in a single turn
@@ -142,6 +145,7 @@ class Board {
 
                         this.board[current.i][current.j] = EMPTY_CELL;
                         combinedCells.push(String(target.i + target.j));
+                        boardChanged = true;
                     }
                 }
             }
@@ -153,7 +157,7 @@ class Board {
         }
 
         // each shift randomly spurs a new cell with initial value (if there is space for it)
-        if (this.hasEmptySpace()) {
+        if (this.hasEmptySpace() && boardChanged) {
             const randomCell = this.generateRandomCellIfEmpty();
             this.board[randomCell.row][randomCell.col] = INITIAL_CELL;
         }
@@ -191,11 +195,11 @@ function generateInitialBoard() {
     return initialBoard;
 }
 
-// const board = new Board(generateInitialBoard());
-const board = new Board([
-    [null, null, null, null],
-    [null, null, null, null],
-    [null, null, null, null],
-    [2, 2, 2, 2]
-]);
+const board = new Board(generateInitialBoard());
+// const board = new Board([
+//     [null, null, null, null],
+//     [null, null, null, null],
+//     [null, null, null, null],
+//     [2, 2, 2, 2]
+// ]);
 export default board;
