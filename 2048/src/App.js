@@ -1,38 +1,40 @@
+import React, {useState, useEffect} from "react";
+import * as deepcopy from "deepcopy";
 import './App.css';
 import board from './Logic/board';
+import Board from "./Board/Board";
 
 function App() {
+  const [boardView, setBoardView] = useState([]);
+  const [gameOver, setGameOver] = useState(false);
 
-  console.log(board.get());
-  console.log(board.hasAvailableMoves());
+  useEffect(() => {
+    board.get().then(board => {
+      setBoardView(deepcopy(board));
+    })
+  }, []);
 
-  const shiftLeft = () => {
-    board.shift("left");
-    console.log(board.get());
+  const shift = (direction) => {
+    board.shift(direction).then(newBoard => {
+      console.log("got new board", newBoard);
+      setBoardView(deepcopy(newBoard));
+    }).catch(event => {
+      setGameOver(true);
+    });
   }
 
-  const shiftRight = () => {
-    board.shift("right");
-    console.log(board.get());
-  }
-
-  const shiftDown = () => {
-    board.shift("down");
-    console.log(board.get());
-  }
-
-  const shiftUp = () => {
-    board.shift("up");
-    console.log(board.get());
-  }
-
+  console.log("re render")
   return (
     <div className="App">
       <h1>2048</h1>
-      <button onClick={shiftLeft}>SHIFT LEFT</button>
-      <button onClick={shiftRight}>SHIFT RIGHT</button>
-      <button onClick={shiftDown}>SHIFT DOWN</button>
-      <button onClick={shiftUp}>SHIFT UP</button>
+      <div>
+      <button onClick={() => shift("left")}>SHIFT LEFT</button>
+      <button onClick={() => shift("right")}>SHIFT RIGHT</button>
+      <button onClick={() => shift("down")}>SHIFT DOWN</button>
+      <button onClick={() => shift("up")}>SHIFT UP</button>
+      </div>  
+
+      <Board data={boardView} />
     </div>
   );
 }

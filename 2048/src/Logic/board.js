@@ -1,5 +1,5 @@
 // defines a single board you can import from anywhere in the app (initialized upon start)
-import {BOARD_SIZE, EMPTY_CELL, INITIAL_CELL} from './consts';
+import {BOARD_SIZE, EMPTY_CELL, INITIAL_CELL, WINNING_VALUE} from './consts';
 
 class Board {
     board = [];
@@ -15,7 +15,7 @@ class Board {
         this.board = JSON.parse(JSON.stringify(initialBoard)); // deep copy for the sake of immutability
     }
 
-    get() {
+    async get() {
         return this.board;
     }
 
@@ -124,11 +124,19 @@ class Board {
         for (let pair of generator()) {
             const { current, target } = pair;
             if (this.board[current.i][current.j] !== EMPTY_CELL && target) {
+                // move cell
                 if (this.board[target.i][target.j] === EMPTY_CELL) {
                     this.board[target.i][target.j] = this.board[current.i][current.j];
                     this.board[current.i][current.j] = EMPTY_CELL;
+                // combine values
                 } else if (this.board[target.i][target.j] === this.board[current.i][current.j]) {
                     this.board[target.i][target.j] += this.board[current.i][current.j];
+
+                    // if new value is winning value, win the game
+                    if (this.board[target.i][target.j] === WINNING_VALUE) {
+                        throw MediaError("Win");
+                    }
+
                     this.board[current.i][current.j] = EMPTY_CELL;
                 }
             }
@@ -161,11 +169,17 @@ function generateRandomCell(boardSize) {
 }
 
 // initial board is always empty except for two initial cells, randomly chosen
-// TODO: handle edge case of same indices
 function generateInitialBoard() {
     const initialBoard = new Array(BOARD_SIZE).fill(EMPTY_CELL).map(() => new Array(BOARD_SIZE).fill(EMPTY_CELL));
-    const randomCell1 = generateRandomCell(BOARD_SIZE);
-    const randomCell2 = generateRandomCell(BOARD_SIZE);
+    let randomCell1 = generateRandomCell(BOARD_SIZE);
+    let randomCell2 = generateRandomCell(BOARD_SIZE);
+
+    // in case random returned same cell twice
+    // it can happen twice in a row, but very minimal change
+    if (randomCell1.row === randomCell2.row && randomCell1.col === randomCell2.col) {
+        randomCell1 = generateRandomCell(BOARD_SIZE);
+        randomCell2 = generateRandomCell(BOARD_SIZE);
+    }
 
     initialBoard[randomCell1.row][randomCell1.col] = INITIAL_CELL;
     initialBoard[randomCell2.row][randomCell2.col] = INITIAL_CELL;
