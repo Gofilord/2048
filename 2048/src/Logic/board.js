@@ -4,6 +4,13 @@ import {BOARD_SIZE, EMPTY_CELL, INITIAL_CELL} from './consts';
 class Board {
     board = [];
 
+    GENERATORS = {
+        "up": this.upGenerator.bind(this),
+        "right": this.rightGenerator.bind(this),
+        "down": this.downGenerator.bind(this),
+        "left": this.leftGenerator.bind(this)
+    }
+
     constructor(initialBoard) {
         this.board = initialBoard;
     }
@@ -12,22 +19,70 @@ class Board {
         return this.board;
     }
 
-    // main logic of shifting to left
-    shiftLeft() {
+    * upGenerator() {
         for (let i = 0; i < BOARD_SIZE; i++) {
-            for (let j = BOARD_SIZE - 1; j > 0; j--) { 
-                const currentCell = this.board[i][j];
-
-                if (currentCell === EMPTY_CELL) {
-                    continue;
+            for (let j = 0; j < BOARD_SIZE; j++) {
+                for (let k = i; k > 0; k--) {
+                    yield ({
+                        current: { i: k, j },
+                        target: { i: k - 1, j }
+                    });
                 }
+            }
+        }
+    }
 
-                if (this.board[i][j - 1] === EMPTY_CELL) {
-                    this.board[i][j - 1] = currentCell;
-                    this.board[i][j] = EMPTY_CELL;
-                } else if (this.board[i][j - 1] === currentCell) {
-                    this.board[i][j - 1] += currentCell;
-                    this.board[i][j] = EMPTY_CELL;
+    * rightGenerator() {
+        for (let i = 0; i < BOARD_SIZE; i++) {
+            for (let j = BOARD_SIZE - 1; j >= 0; j--) {
+                for (let k = j; k < BOARD_SIZE - 1; k++) {
+                    yield ({
+                        current: { i, j: k },
+                        target: { i, j: k + 1 }
+                    });
+                }
+            }
+        }
+    }
+
+    * downGenerator() {
+        for (let i = BOARD_SIZE - 1; i >= 0; i--) {
+            for (let j = 0; j < BOARD_SIZE; j++) {
+                for (let k = i; k < BOARD_SIZE - 1; k++) {
+                    yield ({
+                        current: { i: k, j },
+                        target: { i: k + 1, j }
+                    });
+                }
+            }
+        }
+    }
+
+    // yields the next non-empty cell indices when scanning the board top to bottom, left to right 
+    * leftGenerator() {
+        for (let i = 0; i < BOARD_SIZE; i++) {
+            for (let j = 0; j < BOARD_SIZE; j++) {
+                for (let k = j; k > 0; k--) {
+                    yield ({
+                        current: { i, j: k },
+                        target: { i, j: k - 1 }
+                    });
+                }
+            }
+        }
+    }
+
+    shift(direction) {
+        const generator = this.GENERATORS[direction];
+        for (let pair of generator()) {
+            const { current, target } = pair;
+            if (this.board[current.i][current.j] !== EMPTY_CELL && target) {
+                if (this.board[target.i][target.j] === EMPTY_CELL) {
+                    this.board[target.i][target.j] = this.board[current.i][current.j];
+                    this.board[current.i][current.j] = EMPTY_CELL;
+                } else if (this.board[target.i][target.j] === this.board[current.i][current.j]) {
+                    this.board[target.i][target.j] += this.board[current.i][current.j];
+                    this.board[current.i][current.j] = EMPTY_CELL;
                 }
             }
         }
