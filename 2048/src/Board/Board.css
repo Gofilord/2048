@@ -1,0 +1,72 @@
+.board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 16px;
+    padding: 16px;
+    height: 500px;
+    width: 500px;
+    background: #bbada0;
+    border-radius: 5px;
+}
+
+.cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: rgba(238, 228, 218, 0.35);
+    font-size: 50px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    transition: .2s background-color ease;
+}
+
+.cell-2 {
+    background: #ece5da;
+    color: #776e65
+}
+
+.cell-4 {
+    background: #ede0c8;
+    color: #776e65
+}
+
+.cell-8 {
+    background: #e5b274;
+}
+
+.cell-16 {
+    background: #e6965f;
+}
+
+.cell-32 {
+    background: #e57f5d;
+}
+
+.cell-64 {
+    background: #e25f37;
+}
+
+.cell-128 {
+    background: #e4d06a;
+}
+
+.cell-256 {
+    background: #e4cf56;
+}
+
+.cell-512 {
+    background: #e2cb40;
+}
+
+.cell-1024 {
+    background: #e2c92a;
+    font-size: 35px;
+}
+
+.cell-2048 {
+    background: #e3c600;
+    font-size: 35px;
+}
