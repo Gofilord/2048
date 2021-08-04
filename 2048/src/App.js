@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import * as deepcopy from "deepcopy";
+import useKepress from "react-use-keypress";
 import './App.css';
 import board from './Logic/board';
 import Board from "./Board/Board";
@@ -26,17 +27,22 @@ function App() {
                 setGameOver(true);
             }
         });
-    }
+    };
+
+    useKepress(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"], (event) => {
+        const mapping = {
+            "ArrowLeft": () => shift("left"),
+            "ArrowRight": () => shift("right"),
+            "ArrowUp": () => shift("up"),
+            "ArrowDown": () => shift("down")
+        };
+
+        mapping[event.key]();
+    });
 
     return (
-        <div className="App">
+        <div className="App" onKeyPress={e => console.log(e.key)}>
             <h1>2048</h1>
-            <div>
-            <button onClick={() => shift("left")}>SHIFT LEFT</button>
-            <button onClick={() => shift("right")}>SHIFT RIGHT</button>
-            <button onClick={() => shift("down")}>SHIFT DOWN</button>
-            <button onClick={() => shift("up")}>SHIFT UP</button>
-            </div>  
 
             <Board data={boardView} />
         </div>

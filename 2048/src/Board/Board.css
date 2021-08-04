@@ -3,17 +3,17 @@
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(4, 1fr);
     gap: 16px;
+    padding: 16px;
     height: 80vh;
     width: 80vh;
     background: #eee;
 }
 
-.board-row {
-    
-}
-
 .cell {
-    /* height: 40px; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     background: #ddd;
-    border: 1px solid black;
+    border-radius: 10px;
 }
